@@ -1,0 +1,24 @@
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "email" : "julliane.tampus@carsu.edu.ph",
+    "password" : "123"
+}
+
+
+###
+
+GET http://localhost:3001/api/token
+
+
+
+###
+
+POST http://localhost:3001/api/register/verify_code
+Content-Type: application/json
+
+{
+    "code_v" : "37966",
+    "code" : "2b10o2XFyJGqgNFdre_QfIDZf.IPYBKyAV8QnQAFye6UjVDwBKOpTWiee"
+}
