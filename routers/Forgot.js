@@ -1,8 +1,6 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const db = require('../controllers/DB')
-const codegen = require('../controllers/CodeGen')
-const mail = require('../controllers/mail')
 const cookie = require('cookie-parser')
 const mailsender = require('../controllers/MailSender')
 
@@ -31,7 +29,7 @@ router.post('/',  async (req, res)=>{
 
     console.log(data)
     
-    const newpass = `UPDATE users SET password = '${data.password}' , verification = NULL WHERE email='${data.email}'`
+    const newpass = `UPDATE user SET password = '${data.password}' , verification = NULL WHERE email='${data.email}'`
 
 
     bcrypt.compare(data.code , data.hashcode , (err , hash)=>{
@@ -61,7 +59,7 @@ router.post('/',  async (req, res)=>{
 
 router.post('/check_email', (req, res)=>{
 
-    const sql = `SELECT email , username FROM users WHERE email = '${req.body.email}'`
+    const sql = `SELECT email , first_name FROM user WHERE email = '${req.body.email}'`
 
     db.query(sql, (err, data)=>{
         if(err) return res.json({err : "Error on Server"})
@@ -70,7 +68,7 @@ router.post('/check_email', (req, res)=>{
 
         if(data.length === 0) return res.json({message : "could not find email account"})
 
-        return res.json({message : "ok", username : data[0].username})
+        return res.json({message : "ok"})
 
     })
     
@@ -103,18 +101,12 @@ router.post('/verify_code', (req, res)=>{
             return res.json({status : "invalid verification code"})
         }
     })
-
-
-
 })
 
 
 router.post('/send_code_email_verify', mailsender, (req, res)=>{
-
     console.log('hello')
-
     res.json(req.vrcxxData)
-
 })
 
 
