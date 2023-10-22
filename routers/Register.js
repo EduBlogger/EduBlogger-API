@@ -10,17 +10,18 @@ router.post('/', async (req, res)=>{
     await bcrypt.hash(req.body.password, 10).then(
         hash => {
             const values = {
-                name : (req.body.fname + ' ' + req.body.mname + ' ' + req.body.lname).trim(),
+                fname : req.body.fname.trim(), 
+                mname : req.body.mname.trim(), 
+                lname : req.body.lname.trim(),
                 email : req.body.email.trim().toLowerCase(),
                 password : hash
             }
             
-            const sql = `INSERT INTO users (username , password , email ) VALUES('${values.name}', '${values.password}', '${values.email}')`
+            const sql = `INSERT INTO user (first_name , middle_name , last_name ,  password , email ) VALUES('${values.fname}', '${values.mname}' ,'${values.lname}', '${values.password}', '${values.email}')`
             
             db.query(sql, (err, data)=>{
                 console.log(data)
-                console.log("regster a user " + values.name)
-                res.cookie('vcxx', hash)
+                console.log("regster a user " + values.fname)
                 if(!err) return res.json({status : 'ok',message : "register successfully."})
                 return res.json({message : "register unsuccessfull."})
             })
@@ -29,25 +30,17 @@ router.post('/', async (req, res)=>{
     
 })
 
-
-
 router.post('/check_email', (req, res)=>{
 
-    const sql = `SELECT email FROM users WHERE email = '${req.body.email}'`
+    const sql = `SELECT email FROM user WHERE email = '${req.body.email}'`
 
     db.query(sql, (err, data)=>{
         if(err) return res.json({err : "Error on Server"})
 
-        console.log(data)
-
-
         if(data.length === 0) return res.json({message : "ok"})
 
         return res.json({message : "this email is already in used."})
-
     })
-
-
 })
 
 
@@ -60,8 +53,6 @@ router.post('/verify_code', (req, res)=>{
         hashcode : req.body.code
     }
 
-    console.log(data)
-
     if(data.hashcode === undefined) {
         return res.json({status : 'unauthorized'})
     }
@@ -72,7 +63,6 @@ router.post('/verify_code', (req, res)=>{
             return res.json({err : "error"})
         }else{
             if(ress){
-                console.log(ress)
                 return res.json({status : "ok"})
             }else{
                 return res.json({status : "invalid verification code"})
@@ -82,15 +72,9 @@ router.post('/verify_code', (req, res)=>{
 
 })
 
-
 router.post('/send_code_email_verify', mailsender, (req, res)=>{
-
     const data = req.vrcxxData
-
-    console.log(data)
-
     res.json(data)
-
 })
 
 

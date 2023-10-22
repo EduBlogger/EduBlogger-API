@@ -8,20 +8,20 @@ const db = require('../controllers/DB')
 router.post('/' , (req, res)=>{
 
     console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/login")
-    const sql = `SELECT * FROM users WHERE email = '${req.body.email}'`
+    const sql = `SELECT * FROM user WHERE email = '${req.body.email}'`
 
 
     db.query(sql , (err , data) =>{
 
         console.log(data)
 
-        if(err) return res.json({message : "Error on Server"})
+        if(err) return res.json({error : "Error on Server"})
         if(data.length > 0){
             bcrypt.compare(req.body.password.toString() , data[0].password , (err , result)=>{
-                if( err ) return res.json({message : "Error on Server"})
+                if( err ) return res.json({error : "Error on Server"})
                 if(result){
 
-                    const name = data[0].username
+                    const name = data[0].user_id
 
                     const token = jwt.sign({name} , process.env.JWT_SECRET_KEY , {expiresIn: '1d'})
 
@@ -33,7 +33,7 @@ router.post('/' , (req, res)=>{
                 }
             })
         }else{
-            return res.json({message : "Email doesn't exist"})
+            return res.json({error : "Email doesn't exist"})
         }   
     })
 })
