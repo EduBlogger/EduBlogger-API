@@ -18,6 +18,10 @@ app.use(cors({
 app.use(cookie())
 
 
+app.use(express.static('Public'))
+app.use(express.static('Public/images/upload'))
+
+
 
 const login = require('./routers/Login')
 app.use('/api/login', login)    
@@ -34,7 +38,11 @@ app.use('/api/forgot', forgot)
 const logout = require('./routers/Logout')
 app.use('/api/logout', logout)
 
+const blog = require('./routers/BlogPost')
+app.use('/api/blog', blog)
 
+const home = require('./routers/Home')
+app.use('/api/home' , home)
 
 app.listen( port , ()=>{
     console.log("Server is running in port: " + port)

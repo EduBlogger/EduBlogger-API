@@ -53,9 +53,9 @@ const mailsender = async (req, res , next) =>{
             <body>
                 <div class="contnaier">
                     <h1 class="head-line">Verify your Email Account</h1>
-                    <p>Hello, Thank you for choosing Edublogger! To ensure the security of your account, we need to verify your email address.
+                    <p>Hello, Thank you for choosing Edublogger! To ensure the security of your account, here is your verification code.
                     <br>
-                    Please use the following verification code to complete the registration process:
+                    Please use the following verification code to complete the process:
                     <br>
                     Verification Code: ${code}
                     <br>
