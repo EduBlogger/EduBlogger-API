@@ -34,7 +34,7 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
 
     console.log(data)
 
-    const post_a_blog = `INSERT INTO blog_post (title, content, category_id , status , user_id) VALUES('${data.blogTitle}' ,'${data.blogBody}', ${data.blogCategory} , 'public'  , ${data.userID} )`
+    const post_a_blog = `INSERT INTO blog_post (title, content, category_id , blog_banner, status , user_id) VALUES('${data.blogTitle}' ,'${data.blogBody}', ${data.blogCategory} , '${data.blogBanner}' , 'public'  , ${data.userID} )`
 
     db.query(post_a_blog , (err , result)=>{
 

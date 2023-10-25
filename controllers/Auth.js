@@ -5,7 +5,17 @@ const verifyUser = (req, res ,next) =>{
     if(!token) return res.json({error : "unauthorized user"})
     jwt.verify(token , process.env.JWT_SECRET_KEY , (err , decoded)=>{
         if(err) return res.json({error : 'token expired'})
+
+        res.clearCookie('token')
+        
         req.name = decoded.name
+        
+        const user_name = req.name
+        
+        const refresh_token = jwt.sign({user_name} , process.env.JWT_SECRET_KEY , {expiresIn: '1d'})
+        
+        res.cookie('token', refresh_token)
+        
         next()
     })
     

@@ -23,7 +23,7 @@ router.post('/' , (req, res)=>{
                     bcrypt.compare(req.body.password.toString() , data[0].password , (err , result)=>{
                         if( err ) return res.json({error : "Error on Server"})
                         if(result){
-        
+                            
                             const name = data[0].user_id
         
                             const token = jwt.sign({name} , process.env.JWT_SECRET_KEY , {expiresIn: '1d'})

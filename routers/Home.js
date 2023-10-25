@@ -5,8 +5,9 @@ const db = require('../controllers/DB')
 router.get('/', (req, res)=>{
 
     db.query('select * from blog_post' , (err , result)=>{
-
-        res.json(result)
+        if(err) return console.log(err)
+        console.log(result)
+        return res.json(result)
     })
 
 })
