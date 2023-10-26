@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const bcrypt = require('bcrypt')
 const db = require('../controllers/DB')
 const mailsender = require('../controllers/MailSender')
+const axios = require('axios')
 const router = express.Router()
 
 router.post('/', async (req, res)=>{
@@ -76,6 +78,30 @@ router.post('/send_code_email_verify', mailsender, (req, res)=>{
     const data = req.vrcxxData
     res.json(data)
 })
+
+
+
+router.post('/form-validate', (req, res)=>{
+
+    const token = req.body.recaptcha
+    const secretKey = process.env.RECAPTCHA_KEY
+
+    axios.post('https://www.google.com/recaptcha/api/siteverify', null , {
+        params: {
+            secret: secretKey,
+            response: token
+    }}).then((response) => {
+        if (response.data.success) {
+          res.json({ success: true });
+        } else {
+          res.json({ success: false });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ success: false, error: error.message });
+      });
+})
+
 
 
 module.exports = router
