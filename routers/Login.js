@@ -8,8 +8,8 @@ const mailsender = require('../controllers/MailSender')
 const axios = require('axios')
 router.post('/' , (req, res)=>{
 
-    console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/login")
-    const sql = `SELECT * FROM user WHERE email = '${req.body.email}'`
+    console.log("[HTTP REQUIEST]: users is requiesting in Server :/api/login")
+    const sql = `SELECT * FROM users WHERE email = '${req.body.email}'`
 
 
     console.log(req.body.recaptcha)
@@ -36,14 +36,14 @@ router.post('/' , (req, res)=>{
                         console.log(data)
                 
                         if(err) return res.json({error : "Error on Server"})
-                        if(data.length > 0){
-                            bcrypt.compare(req.body.password.toString() , data[0].password , (err , result)=>{
+                        if(data.rows.length > 0){
+                            bcrypt.compare(req.body.password.toString() , data.rows[0].password , (err , result)=>{
                                 if( err ) return res.json({error : "Error on Server"})
                                 if(result){
                                     
-                                    const name = data[0].user_id
+                                    const name = data.rows[0].user_id
                 
-                                    const token = jwt.sign({name} , process.env.JWT_SECRET_KEY , {expiresIn: '15s'})
+                                    const token = jwt.sign({name} , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
                 
                                     res.cookie('token', token)
                 
@@ -77,17 +77,14 @@ router.post('/' , (req, res)=>{
 
 
 router.post('/verifying', (req, res)=>{
-    console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/login/verifying")
-    const sql = `SELECT * FROM user WHERE email = '${req.body.email}'`
+    console.log("[HTTP REQUIEST]: users is requiesting in Server :/api/login/verifying")
+    const sql = `SELECT * FROM users WHERE email = '${req.body.email}'`
 
 
     db.query(sql , (err , data) =>{
-
-        console.log(data)
-
         if(err) return res.json({error : "Error on Server"})
-        if(data.length > 0){
-            bcrypt.compare(req.body.password.toString() , data[0].password , (err , result)=>{
+        if(data.rows.length > 0){
+            bcrypt.compare(req.body.password.toString() , data.rows[0].password , (err , result)=>{
                 if( err ) return res.json({error : "Error on Server"})
                 if(result){
                     return res.json({status : "successful"})
