@@ -19,27 +19,28 @@ router.post('/', async (req, res)=>{
                 password : hash
             }
             
-            const sql = `INSERT INTO user (first_name , middle_name , last_name ,  password , email ) VALUES('${values.fname}', '${values.mname}' ,'${values.lname}', '${values.password}', '${values.email}')`
+            const sql = `INSERT INTO users (first_name , middle_name , last_name ,  password , email ) VALUES('${values.fname}', '${values.mname}' ,'${values.lname}', '${values.password}', '${values.email}')`
             
             db.query(sql, (err, data)=>{
+                if(err) console.log(err)
                 console.log(data)
                 console.log("regster a user " + values.fname)
                 if(!err) return res.json({status : 'ok',message : "register successfully."})
                 return res.json({message : "register unsuccessfull."})
             })
         }
-    )
+    ).catch(e => console.log(e))
     
 })
 
 router.post('/check_email', (req, res)=>{
 
-    const sql = `SELECT email FROM user WHERE email = '${req.body.email}'`
+    const sql = `SELECT email FROM users WHERE email = '${req.body.email}'`
 
     db.query(sql, (err, data)=>{
         if(err) return res.json({err : "Error on Server"})
 
-        if(data.length === 0) return res.json({message : "ok"})
+        if(data.rows.length === 0) return res.json({message : "ok"})
 
         return res.json({message : "this email is already in used."})
     })

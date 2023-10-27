@@ -29,7 +29,7 @@ router.post('/',  async (req, res)=>{
 
     console.log(data)
     
-    const newpass = `UPDATE user SET password = '${data.password}' , verification = NULL WHERE email='${data.email}'`
+    const newpass = `UPDATE users SET password = '${data.password}' WHERE email='${data.email}'`
 
 
     bcrypt.compare(data.code , data.hashcode , (err , hash)=>{
@@ -59,7 +59,7 @@ router.post('/',  async (req, res)=>{
 
 router.post('/check_email', (req, res)=>{
 
-    const sql = `SELECT email , first_name FROM user WHERE email = '${req.body.email}'`
+    const sql = `SELECT email , first_name FROM users WHERE email = '${req.body.email}'`
 
     db.query(sql, (err, data)=>{
         if(err) return res.json({err : "Error on Server"})
