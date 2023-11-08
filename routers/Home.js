@@ -3,10 +3,13 @@ const router = express.Router()
 const db = require('../controllers/DB')
 
 router.get('/', (req, res)=>{
+    console.log("user is loading contents [Time]: " + (new Date()))
 
-    db.query('select * from blog_post' , (err , result)=>{
+    const post = `SELECT * FROM public_post`
+
+    db.query(post , (err , result)=>{
         if(err) return console.log(err)
-        console.log(result)
+       // console.log(result)
         return res.json(result)
     })
 

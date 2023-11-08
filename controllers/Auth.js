@@ -8,11 +8,11 @@ const verifyUser = (req, res ,next) =>{
 
         res.clearCookie('token')
         
-        req.name = decoded.name
+        const userdata = decoded.userdata
+
+        req.user_data = userdata
         
-        const user_name = req.name
-        
-        const refresh_token = jwt.sign({user_name} , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
+        const refresh_token = jwt.sign( {userdata : userdata } , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
         
         res.cookie('token', refresh_token)
         
