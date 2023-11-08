@@ -24,25 +24,26 @@ const upload = multer({ storage });
 router.post('/', upload.single('blogBanner'), (req ,res)=>{
     console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog")
     
-    const data = {
-      blogTitle : req.body.blogTitle,
-      blogCategory : req.body.blogCategory,
-      blogBody : req.body.blogBody,
-      blogBanner : req.file.filename,
-      userID : req.body.userID
-    }
+    const data = [
+      req.body.blogTitle,
+      req.body.blogBody,
+      req.body.blogCategory,
+      req.file.filename,
+      'public',
+      req.body.userID
+    ]
 
     console.log(data)
 
-    const post_a_blog = `INSERT INTO blog_post (title, content, category_id , blog_banner, status , user_id) VALUES('${data.blogTitle}' ,'${data.blogBody}', ${data.blogCategory} , '${data.blogBanner}' , 'public'  , ${data.userID} )`
+    const post_a_blog = 'INSERT INTO blog_post (title, content, category_id , blog_banner, status , user_id) VALUES($1, $2, $3, $4, $5, $6)'
 
-    db.query(post_a_blog , (err , result)=>{
+    db.query(post_a_blog ,data, (err , result)=>{
 
       console.log(err)
 
       if(err) return res.send({message : 'error'}).status(500)
 
-      return res.send({message : 'blog successfuly created'}).status(201)
+      if(result) return res.send({message : 'blog successfuly created'}).status(201)
 
     })
     

@@ -32,8 +32,7 @@ router.post('/' , (req, res)=>{
                 if( err ) return res.json({error : "Error on Server"})
                 if(result){
                     db.query(sql , (err , data) =>{
-        
-                        console.log(data)
+    
                 
                         if(err) return res.json({error : "Error on Server"})
                         if(data.rows.length > 0){
@@ -41,9 +40,15 @@ router.post('/' , (req, res)=>{
                                 if( err ) return res.json({error : "Error on Server"})
                                 if(result){
                                     
-                                    const name = data.rows[0].user_id
+                                    const user = {
+                                        username : data.rows[0].first_name,
+                                        user_id : data.rows[0].user_id
+                                    }
+
+                                    console.log("userdata : " + user.toString())
+                                    console.log("user " + user.username + " is login [Time]: " + (new Date()).getDate())
                 
-                                    const token = jwt.sign({name} , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
+                                    const token = jwt.sign( {userdata : user} , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
                 
                                     res.cookie('token', token)
                 
