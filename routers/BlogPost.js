@@ -51,5 +51,34 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
 })
 
 
+router.post('/no_banner', (req ,res)=>{
+  console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog")
+  
+  const data = [
+    req.body.blogTitle,
+    req.body.blogBody,
+    req.body.blogCategory,
+    'public',
+    req.body.userID
+  ]
+
+  console.log(data)
+
+  const post_a_blog = 'INSERT INTO blog_post (title, content, category_id, status , user_id) VALUES($1, $2, $3, $4, $5)'
+
+  db.query(post_a_blog ,data, (err , result)=>{
+
+    console.log(err)
+
+    if(err) return res.send({message : 'error'}).status(500)
+
+    if(result) return res.send({message : 'blog successfuly created'}).status(201)
+
+  })
+  
+
+})
+
+
 
 module.exports = router
