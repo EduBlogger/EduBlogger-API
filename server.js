@@ -3,6 +3,7 @@ const express = require('express')
 const cookie = require('cookie-parser')
 const cors = require('cors')
 const app = express()
+const auth = require('./controllers/Auth')
 const port = process.env.PORT
 
 
@@ -39,10 +40,10 @@ const logout = require('./routers/Logout')
 app.use('/api/logout', logout)
 
 const blog = require('./routers/BlogPost')
-app.use('/api/blog', blog)
+app.use('/api/blog', auth, blog)
 
 const home = require('./routers/Home')
-app.use('/api/home' , home)
+app.use('/api/home' ,auth, home)
 
 app.listen( port , ()=>{
     console.log("Server is running in port: " + port)
