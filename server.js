@@ -45,6 +45,9 @@ app.use('/api/blog', auth, blog)
 const home = require('./routers/Home')
 app.use('/api/home' ,auth, home)
 
+const profile = require('./routers/Profile')
+app.use('/api/profile' ,auth, profile)
+
 app.listen( port , ()=>{
     console.log("Server is running in port: " + port)
 })
