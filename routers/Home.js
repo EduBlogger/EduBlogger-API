@@ -4,8 +4,20 @@ const db = require('../controllers/DB')
 
 router.get('/', (req, res)=>{
     console.log("user is loading contents [Time]: " + (new Date()))
-
+    
     const post = `SELECT * FROM public_post WHERE title ILIKE '%${req.query.search}%' OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+
+    db.query(post , (err , result)=>{
+        if(err) return console.log(err)
+        return res.json(result.rows)
+    })
+
+})
+
+router.get('/blog', (req, res)=>{
+    console.log("user is loading contents [Time]: " + (new Date()))
+    
+    const post = `SELECT * FROM public_post WHERE post_id = ${req.query.id}`
 
     db.query(post , (err , result)=>{
         if(err) return console.log(err)

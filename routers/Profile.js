@@ -20,7 +20,7 @@ router.get('/', (req, res)=>{
 
 router.get('/my_blogs',(req, res)=>{
 
-    const get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id}`
+    const get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id} OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
 
     db.query(get_my_blogs , (error , result)=>{
         if(error){
