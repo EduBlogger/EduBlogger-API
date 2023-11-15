@@ -8,6 +8,9 @@ const mailsender = async (req, res , next) =>{
 
     const vrcxx = await bcrypt.hash(code ,10)
 
+    console.log('verificattion code : ' + code)
+
+
     const htmlContent = `<!DOCTYPE html>
         <html lang="en">
             <head>
