@@ -122,6 +122,58 @@ router.post('/isreact' , ( req, res)=>{
     
 })
 
+router.post('/save', (req, res)=>{
+    const save_blog = `INSERT INTO saved(user_id , post_id) VALUES(${req.body.user_id}, ${req.body.post_id})`
+
+    db.query(save_blog , (error , result)=>{
+        if(error){
+            console.log(error)
+            res.send({successful : false})
+        }
+
+        if(result) return res.send({successful : true})
+
+    })
+})
+
+
+router.post('/unsave', (req, res)=>{
+    const unsave_blog = `DELETE FROM saved WHERE user_id=${req.body.user_id} AND post_id=${req.body.post_id}`
+
+    db.query(unsave_blog , (error , result)=>{
+        if(error){
+            console.log(error)
+            res.send({successful : false})
+        }
+
+        if(result) return res.send({successful : true})
+        
+    })
+})
+
+
+router.post('/issaved' , ( req, res)=>{
+    const isSaved = `
+            SELECT user_id
+            FROM  saved
+            WHERE user_id = ${req.body.user_id} AND post_id = ${req.body.post_id}
+        `
+
+    db.query(isSaved , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successful : false})
+        }
+
+        if(result.rowCount === 1){
+            return res.send({successful : true})
+        }else{
+            return res.send({successful : false})
+        }
+
+    })
+    
+})
 
 
 module.exports = router
