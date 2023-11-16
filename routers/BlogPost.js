@@ -29,7 +29,7 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
       req.body.blogBody,
       req.body.blogCategory,
       req.file.filename,
-      'public',
+      req.body.status,
       req.body.userID
     ]
 
@@ -58,7 +58,7 @@ router.post('/no_banner', (req ,res)=>{
     req.body.blogTitle,
     req.body.blogBody,
     req.body.blogCategory,
-    'public',
+    req.body.status,
     req.body.userID
   ]
 
