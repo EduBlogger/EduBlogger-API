@@ -4,10 +4,20 @@ const db = require('../controllers/DB')
 
 router.get('/', (req, res)=>{
     console.log("user is loading contents [Time]: " + (new Date()))
-    
-    const post = `SELECT * FROM public_post WHERE title ILIKE '%${req.query.search}%' OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
 
-    db.query(post , (err , result)=>{
+
+    const blogs = `
+        SELECT *
+        FROM
+        (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
+        UNION
+        SELECT * FROM public_post) as blogs
+        WHERE blogs.title ILIKE '%${req.query.search}%' 
+        ORDER BY blogs.date_posted DESC
+        OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
+    `
+
+    db.query(blogs , (err , result)=>{
         if(err) return console.log(err)
         return res.json(result.rows)
     })
