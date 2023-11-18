@@ -20,7 +20,23 @@ router.get('/', (req, res)=>{
 
 router.get('/my_blogs',(req, res)=>{
 
-    const get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id} OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+    let get_my_blogs = ''
+
+    console.log('query id : ' + req.query.id + ' user_id: ' + req.user_data.user_id)
+
+    if(req.query.id == req.user_data.user_id){
+        get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id} OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+    }else{
+        if(req.query.following === 'true'){
+            console.log("is follow? : " + req.query.following)
+            get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id} AND status != 'private' OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+        }else{
+            console.log('only public is available to accesss')
+            get_my_blogs = `SELECT * FROM user_profile_blogs WHERE user_id = ${req.query.id} AND status = 'public' OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+        }
+    }
+
+
 
     db.query(get_my_blogs , (error , result)=>{
         if(error){
@@ -35,12 +51,9 @@ router.get('/my_blogs',(req, res)=>{
 router.get('/my_likes', (req, res)=>{
 
     const get_my_likes = `
-    SELECT l.post_id , u.*
-    FROM liked l , (
-        SELECT * FROM user_profile_blogs OFFSET ${req.query.current} LIMIT ${req.query.lastpage} 
-    ) as u
-    WHERE l.user_id = ${req.query.user_id} AND u.post_id = l.post_id
-    ORDER BY l.date_liked DESC
+    SELECT * FROM liked INNER JOIN user_profile_blogs ON liked.post_id = user_profile_blogs.post_id AND liked.user_id = ${req.query.user_id}
+    ORDER BY liked.date_liked DESC
+    OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
     ` 
 
     db.query(get_my_likes , (error , result)=>{
@@ -57,12 +70,9 @@ router.get('/my_likes', (req, res)=>{
 router.get('/my_saved', (req, res)=>{
 
     const get_my_saved = `
-    SELECT s.post_id , u.*
-    FROM saved s , (
-        SELECT * FROM user_profile_blogs OFFSET ${req.query.current} LIMIT ${req.query.lastpage} 
-    ) as u
-    WHERE s.user_id = ${req.query.user_id} AND u.post_id = s.post_id
-    ORDER BY s.date_saved DESC
+    SELECT * FROM saved INNER JOIN user_profile_blogs ON saved.post_id = user_profile_blogs.post_id AND saved.user_id = ${req.query.user_id}
+    ORDER BY saved.date_saved DESC
+    OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
     ` 
 
     db.query(get_my_saved , (error , result)=>{
@@ -76,6 +86,18 @@ router.get('/my_saved', (req, res)=>{
 })
 
 router.get('/my_draft', (req, res)=>{
+
+    const my_draft = `SELECT * FROM blog_post WHERE status = 'draft' AND user_id=${req.user_data.user_id} OFFSET ${req.query.current} LIMIT ${req.query.lastpage}`
+
+    db.query(my_draft , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successfull : false})
+        }
+
+        return res.send(result.rows)
+    })
+
 })
 
 

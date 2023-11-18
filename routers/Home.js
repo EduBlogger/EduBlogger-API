@@ -5,17 +5,33 @@ const db = require('../controllers/DB')
 router.get('/', (req, res)=>{
     console.log("user is loading contents [Time]: " + (new Date()))
 
+    let blogs
 
-    const blogs = `
-        SELECT *
-        FROM
-        (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
-        UNION
-        SELECT * FROM public_post) as blogs
-        WHERE blogs.title ILIKE '%${req.query.search}%' 
-        ORDER BY blogs.date_posted DESC
-        OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
-    `
+    if(req.query.category != 'null'){
+        console.log(req.query.category)
+        blogs = `
+            SELECT *
+            FROM
+            (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
+            UNION
+            SELECT * FROM public_post) as blogs
+            WHERE blogs.title ILIKE '%${req.query.search}%' AND category_id = ${req.query.category} 
+            ORDER BY blogs.date_posted DESC
+            OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
+        `
+    }else{
+        blogs = `
+            SELECT *
+            FROM
+            (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
+            UNION
+            SELECT * FROM public_post) as blogs
+            WHERE blogs.title ILIKE '%${req.query.search}%' 
+            ORDER BY blogs.date_posted DESC
+            OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
+        `
+    }
+
 
     db.query(blogs , (err , result)=>{
         if(err) return console.log(err)
@@ -26,8 +42,35 @@ router.get('/', (req, res)=>{
 
 router.get('/blog', (req, res)=>{
     console.log("user is loading contents [Time]: " + (new Date()))
-    
-    const post = `SELECT * FROM public_post WHERE post_id = ${req.query.id}`
+
+
+    const post = `
+        SELECT *
+        FROM
+        (SELECT DISTINCT f.* FROM all_post f , follows fs WHERE f.status = 'follower' AND fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.user_data.user_id} AND f.status = 'follower'
+        UNION
+        SELECT * FROM all_post WHERE status = 'public'
+        UNION
+        SELECT * FROM all_post private WHERE private.status = 'private' AND private.user_id = ${req.user_data.user_id}
+        ) as blogs WHERE blogs.post_id = ${req.query.id}
+    `
+
+    db.query(post , (err , result)=>{
+        if(err) return console.log(err)
+        return res.json(result.rows)
+    })
+
+})
+
+router.get('/raw/blog', (req, res)=>{
+    console.log("user is loading contents [Time]: " + (new Date()))
+
+
+    const post = `
+        SELECT *
+        FROM blog_post
+        WHERE post_id = ${req.query.id} AND user_id = ${req.user_data.user_id}
+    `
 
     db.query(post , (err , result)=>{
         if(err) return console.log(err)
