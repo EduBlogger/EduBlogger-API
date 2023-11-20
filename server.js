@@ -10,10 +10,11 @@ const port = process.env.PORT
 app.use(express.json())
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.ORIGIN_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
-    credentials : true 
+    credentials : true ,
+    proxy: process.env.ORIGIN_URL
 }));
 
 app.use(cookie())
