@@ -82,7 +82,9 @@ router.post('/no_banner', (req ,res)=>{
 
 router.post('/edit', upload.single('blogBanner'), (req, res)=>{
   console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog/edit")
-    
+  
+  const root = path.resolve(__dirname , '..')
+  
     const data = [
       req.body.blogTitle,
       req.body.blogBody,
@@ -101,7 +103,7 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
         return res.send({successfull : false})
       }
       if(result.rows[0].blog_banner != null){
-        fs.unlink(path.join(__dirname ,result.rows[0].blog_banner), error =>{
+        fs.unlink(root+'/Public/images/upload/'+result.rows[0].blog_banner, error =>{
             if(error){
               console.log(error)
               return res.send({successfull : false})
@@ -127,6 +129,10 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
 
 router.post('/edit_noBanner', (req, res)=>{
   console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog/edit_noBanner")
+
+  const root = path.resolve(__dirname , '..')
+
+  console.log('root : ', root)
     
     const data = [
       req.body.blogTitle,
@@ -151,24 +157,26 @@ router.post('/edit_noBanner', (req, res)=>{
       }
       
       if(req.query.image == 0){
+        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
         if(result.rows[0].blog_banner != null){
-          fs.unlink(path.join(__dirname ,result.rows[0].blog_banner), error =>{
+          fs.unlink(root+'/Public/images/upload/'+result.rows[0].blog_banner, error =>{
             if(error){
               console.log(error)
               return res.send({successfull : false})
             }
-            edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
           })
         }
       }
 
       db.query(edit_blog ,data, (err , result)=>{
 
-        console.log(err)
+        if(err) {
+          console.log(err)
+          return res.send({message : 'error'}).status(500)
+        }else{
+          if(result) return res.send({message : 'blog successfuly edited'}).status(200)
+        }
   
-        if(err) return res.send({message : 'error'}).status(500)
-  
-        if(result) return res.send({message : 'blog successfuly edited'}).status(200)
   
       })
 
