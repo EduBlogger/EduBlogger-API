@@ -175,18 +175,12 @@ router.post('/edit_noBanner', (req, res)=>{
           return res.send({message : 'error'}).status(500)
         }else{
           if(result) return res.send({message : 'blog successfuly edited'}).status(200)
-        }
-  
-  
+        }  
       })
 
     })
 
     console.log(data)
-
-    
-
-    
 })
 
 
@@ -203,7 +197,6 @@ router.post('/change_aud' , (req, res)=>{
 
     if(result) return res.send({successfull : true})
 
-
   })
 
 })
@@ -211,13 +204,16 @@ router.post('/change_aud' , (req, res)=>{
 
 router.post('/delete' , (req, res)=>{
 
-
-
-  const delete_blog = ``
+  const delete_blog = `
+    DELETE FROM comments WHERE post_id = ${req.body.post_id};
+    DELETE FROM saved WHERE post_id = ${req.body.post_id};
+    DELETE FROM liked WHERE post_id = ${req.body.post_id};
+    DELETE FROM blog_post WHERE post_id = ${req.body.post_id} AND user_id = ${req.user_data.user_id};
+  `
 
   db.query(delete_blog ,(error , result)=>{
     if(error){
-      console.log(erorr)
+      console.log(error)
       return res.send({successfull : false})
     }
     if(result) return res.send({successfull : true})
