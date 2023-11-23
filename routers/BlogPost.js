@@ -4,6 +4,7 @@ const path = require('path')
 const uuid = require('uuid')
 const db = require('../controllers/DB')
 const router = express.Router()
+const fs = require('fs')
 
 
 router.use(express.urlencoded({extended : true}))
@@ -81,7 +82,9 @@ router.post('/no_banner', (req ,res)=>{
 
 router.post('/edit', upload.single('blogBanner'), (req, res)=>{
   console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog/edit")
-    
+  
+  const root = path.resolve(__dirname , '..')
+  
     const data = [
       req.body.blogTitle,
       req.body.blogBody,
@@ -94,7 +97,23 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
 
     console.log(data)
 
-    const edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = $4, status = $5, user_id = $6 WHERE post_id = $7 AND '
+    db.query(`SELECT * FROM blog_post WHERE post_id=${req.body.post_id} AND user_id = ${req.user_data.user_id}`, (error, result)=>{
+      if(error){
+        console.log(error)
+        return res.send({successfull : false})
+      }
+      if(result.rows[0].blog_banner != null){
+        fs.unlink(root+'/Public/images/upload/'+result.rows[0].blog_banner, error =>{
+            if(error){
+              console.log(error)
+              return res.send({successfull : false})
+            }
+        })
+      }
+
+    })
+
+    const edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = $4, status = $5, user_id = $6 WHERE post_id = $7'
 
     db.query(edit_blog ,data, (err , result)=>{
 
@@ -110,6 +129,10 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
 
 router.post('/edit_noBanner', (req, res)=>{
   console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog/edit_noBanner")
+
+  const root = path.resolve(__dirname , '..')
+
+  console.log('root : ', root)
     
     const data = [
       req.body.blogTitle,
@@ -121,25 +144,51 @@ router.post('/edit_noBanner', (req, res)=>{
       req.user_data.user_id
     ]
 
-    console.log(data)
+    let edit_blog = ''
 
-    const edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5 WHERE post_id = $6 AND user_id $7'
+    db.query(`SELECT * FROM blog_post WHERE post_id=${req.body.post_id} AND user_id = ${req.user_data.user_id}`, (error, result)=>{
+      if(error){
+        console.log(error)
+        return res.send({successfull : false})
+      }
 
-    db.query(edit_blog ,data, (err , result)=>{
+      if(req.query.image == 1){
+        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
+      }
+      
+      if(req.query.image == 0){
+        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
+        if(result.rows[0].blog_banner != null){
+          fs.unlink(root+'/Public/images/upload/'+result.rows[0].blog_banner, error =>{
+            if(error){
+              console.log(error)
+              return res.send({successfull : false})
+            }
+          })
+        }
+      }
 
-      console.log(err)
+      db.query(edit_blog ,data, (err , result)=>{
 
-      if(err) return res.send({message : 'error'}).status(500)
-
-      if(result) return res.send({message : 'blog successfuly edited'}).status(200)
+        if(err) {
+          console.log(err)
+          return res.send({message : 'error'}).status(500)
+        }else{
+          if(result) return res.send({message : 'blog successfuly edited'}).status(200)
+        }  
+      })
 
     })
+
+    console.log(data)
 })
 
 
 router.post('/change_aud' , (req, res)=>{
 
-  const change_aud = `UPDATE blog_post SET status = ${req.body.status} WHERE post_id = ${req.body.post_id} AND ${req.user_data.user_id}`
+  console.log(req.body)
+
+  const change_aud = `UPDATE blog_post SET status = '${req.body.status}' WHERE post_id = ${req.body.post_id} AND user_id = ${req.user_data.user_id}`
 
 
   db.query(change_aud , (error , result)=>{
@@ -150,7 +199,6 @@ router.post('/change_aud' , (req, res)=>{
 
     if(result) return res.send({successfull : true})
 
-
   })
 
 })
@@ -158,13 +206,16 @@ router.post('/change_aud' , (req, res)=>{
 
 router.post('/delete' , (req, res)=>{
 
-
-
-  const delete_blog = ``
+  const delete_blog = `
+    DELETE FROM comments WHERE post_id = ${req.body.post_id};
+    DELETE FROM saved WHERE post_id = ${req.body.post_id};
+    DELETE FROM liked WHERE post_id = ${req.body.post_id};
+    DELETE FROM blog_post WHERE post_id = ${req.body.post_id} AND user_id = ${req.user_data.user_id};
+  `
 
   db.query(delete_blog ,(error , result)=>{
     if(error){
-      console.log(erorr)
+      console.log(error)
       return res.send({successfull : false})
     }
     if(result) return res.send({successfull : true})

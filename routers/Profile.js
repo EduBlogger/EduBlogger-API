@@ -1,6 +1,24 @@
 const express = require('express')
 const db = require('../controllers/DB')
+const multer = require('multer')
+const path = require('path')
+const uuid = require('uuid')
 const router = express.Router()
+const fs = require('fs')
+
+
+router.use(express.urlencoded({extended : true}))
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'Public/images/user_profiles/'); 
+    },
+    filename: (req, file, cb) => {
+      cb(null,`${Date.now()}-${uuid.v4()}${path.extname(file.originalname)}`);
+    },
+});
+  
+const upload = multer({storage})
 
 router.get('/', (req, res)=>{
     const user_id = req.query.id
@@ -100,6 +118,123 @@ router.get('/my_draft', (req, res)=>{
 
 })
 
+router.get('/my', (req, res)=>{
+    const get_user_profile = `SELECT first_name , middle_name ,last_name , user_profile_image , bio FROM users WHERE user_id = ${req.user_data.user_id}`
+
+    db.query(get_user_profile , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successfull : false})
+        }
+
+        if(result) return res.send(result.rows[0])
+
+    })    
+})
+
+
+
+router.post('/save-profile-image', upload.single('user_profile'),  (req, res)=>{
+
+    const root = path.resolve(__dirname , '..')
+
+    const data = [
+        req.body.fname,
+        req.body.mname,
+        req.body.lname,
+        req.body.bio,
+        req.file.filename,
+        req.user_data.user_id
+    ]
+
+
+    console.log(data)
+
+    const edit_user_profile = `
+        UPDATE users SET 
+        first_name = $1,
+        middle_name = $2,
+        last_name = $3,
+        bio = $4,
+        user_profile_image = $5
+        WHERE user_id = $6
+    `
+
+    const select_profile_image = `SELECT user_profile_image FROM users WHERE user_id = ${req.user_data.user_id}`
+
+
+    db.query(select_profile_image , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successfull : false})
+        }
+
+        if(result.rows[0].user_profile_image != null){
+            fs.unlink(root+'/Public/images/user_profiles/'+result.rows[0].user_profile_image, error =>{
+                if(error){
+                  console.log(error)
+                  return res.send({successfull : false})
+                }
+              })
+        }
+        db.query(edit_user_profile , data , (error, result)=>{
+            if(error) {
+                console.log(error)
+                return res.send({successfull : false})
+            }
+    
+            if(result) return res.send({successfull : true})
+        })
+    })
+
+})
+
+
+router.post('/save-non-mult',  (req, res)=>{
+    
+    const data = [
+        req.body.fname,
+        req.body.mname,
+        req.body.lname,
+        req.body.bio,
+        req.user_data.user_id
+    ]
+
+
+    console.log(data)
+
+    const edit_user_profile = `
+        UPDATE users SET 
+        first_name = $1,
+        middle_name = $2,
+        last_name = $3,
+        bio = $4
+        WHERE user_id = $5
+    `
+
+    db.query(edit_user_profile , data , (error, result)=>{
+        if(error) {
+            console.log(error)
+            return res.send({successfull : false})
+        }
+
+        if(result) return res.send({successfull : true})
+    })
+})
+
+
+router.get('/image' , (req, res)=>{
+    const select_profile_image = `SELECT user_profile_image FROM users WHERE user_id = ${req.user_data.user_id}`
+
+    db.query(select_profile_image , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successfull : false})
+        }
+
+        if(result) return res.send({image : result.rows[0].user_profile_image})
+    })
+})
 
 
 module.exports = router
