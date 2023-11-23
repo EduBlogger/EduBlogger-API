@@ -22,6 +22,7 @@ app.use(cookie())
 
 app.use(express.static('Public'))
 app.use(express.static('Public/images/upload'))
+app.use(express.static('Public/images/user_profiles'))
 
 
 

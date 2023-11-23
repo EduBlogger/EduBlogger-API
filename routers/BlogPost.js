@@ -186,7 +186,9 @@ router.post('/edit_noBanner', (req, res)=>{
 
 router.post('/change_aud' , (req, res)=>{
 
-  const change_aud = `UPDATE blog_post SET status = ${req.body.status} WHERE post_id = ${req.body.post_id} AND ${req.user_data.user_id}`
+  console.log(req.body)
+
+  const change_aud = `UPDATE blog_post SET status = '${req.body.status}' WHERE post_id = ${req.body.post_id} AND user_id = ${req.user_data.user_id}`
 
 
   db.query(change_aud , (error , result)=>{
