@@ -51,7 +51,6 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
 
 })
 
-
 router.post('/no_banner', (req ,res)=>{
   console.log("[HTTP REQUIEST]: user is requiesting in Server :/api/blog")
   
@@ -223,6 +222,8 @@ router.post('/delete' , (req, res)=>{
 
 
 })
+
+
 
 
 
