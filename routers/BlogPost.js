@@ -153,11 +153,11 @@ router.post('/edit_noBanner', (req, res)=>{
       }
 
       if(req.query.image == 1){
-        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
+        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, status = $4, user_id = $5, date_posted = NOW() WHERE post_id = $6 AND user_id = $7'
       }
       
       if(req.query.image == 0){
-        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5 WHERE post_id = $6 AND user_id = $7'
+        edit_blog = 'UPDATE blog_post SET title = $1, content = $2, category_id = $3, blog_banner = null, status = $4, user_id = $5, date_posted = NOW() WHERE post_id = $6 AND user_id = $7'
         if(result.rows[0].blog_banner != null){
           fs.unlink(root+'/Public/images/upload/'+result.rows[0].blog_banner, error =>{
             if(error){

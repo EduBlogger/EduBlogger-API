@@ -53,6 +53,10 @@ app.use('/api/profile' ,auth, profile)
 const follow = require('./routers/Follow')
 app.use('/api/follow' ,auth, follow)
 
+const users = require('./routers/People')
+app.use('/api/users', auth, users)
+
+
 app.listen( port , ()=>{
     console.log("Server is running in port: " + port)
 })
