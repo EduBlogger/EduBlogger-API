@@ -229,4 +229,17 @@ router.post('/issaved' , ( req, res)=>{
 })
 
 
+router.get('/topblog' , (req, res)=>{
+    const topblog = 'SELECT title, post_id , user_id , likes FROM public_post ORDER BY likes DESC LIMIT 10'
+
+    db.query(topblog , (error , result)=>{
+        if(error){
+            console.log(error)
+            return res.send({successful : false})
+        }
+        if(result) return res.send(result.rows)
+    })
+})
+
+
 module.exports = router

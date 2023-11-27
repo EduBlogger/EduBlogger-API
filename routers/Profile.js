@@ -36,6 +36,10 @@ router.get('/', (req, res)=>{
     })    
 })
 
+
+
+
+
 router.get('/my_blogs',(req, res)=>{
 
     let get_my_blogs = ''
