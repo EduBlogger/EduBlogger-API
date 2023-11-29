@@ -8,7 +8,6 @@ router.get('/', (req, res)=>{
     let blogs
 
     if(req.query.category != 'null'){
-        console.log(req.query.category)
         blogs = `
             SELECT *
             FROM
@@ -20,6 +19,7 @@ router.get('/', (req, res)=>{
             OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
         `
     }else{
+
         blogs = `
             SELECT *
             FROM
@@ -34,8 +34,12 @@ router.get('/', (req, res)=>{
 
 
     db.query(blogs , (err , result)=>{
-        if(err) return console.log(err)
-        return res.json(result.rows)
+        if(err){
+            return console.log(err)
+        }else{
+            return res.json(result.rows)
+        }
+        
     })
 
 })

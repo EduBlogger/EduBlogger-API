@@ -5,8 +5,11 @@ const router = express.Router()
 
 
 router.get('/', (req, res)=>{
+
+    console.log("this is the query : "+ req.query.search)
+
     const get_all_users = `
-        SELECT * FROM user_profile WHERE user_id != ${req.user_data.user_id} ORDER BY 2 OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
+        SELECT * FROM user_profile WHERE user_id != ${req.user_data.user_id} AND full_name ILIKE '%${req.query.search || ''}%'  ORDER BY 2 OFFSET ${req.query.current} LIMIT ${req.query.lastpage}
     `
 
 
@@ -20,6 +23,8 @@ router.get('/', (req, res)=>{
 
     })
 })
+
+
 
 
 module.exports = router
