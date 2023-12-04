@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../controllers/DB')
+const activity_log = require('../controllers/RecordActivity')
 
 router.post('/add' , (req, res)=>{
     const follow = `INSERT INTO follows(followed_id , follower_id) VALUES(${req.body.followed_id}, ${req.body.follower_id})`
@@ -10,7 +11,7 @@ router.post('/add' , (req, res)=>{
             console.log(error)
             return res.json({successfull : false})
         }
-
+        activity_log(req.user_data.user_id , `Follow | Followed a user` , 'ADDED')
         if(result) return res.json({successfull : true})
     })
     
@@ -25,7 +26,7 @@ router.post('/remove' , (req, res)=>{
             console.log(error)
             return res.json({successfull : false})
         }
-
+        activity_log(req.user_data.user_id , `Follow | Unfollow a user` , 'DELETE')
         if(result) return res.json({successfull : true})
     })
 })

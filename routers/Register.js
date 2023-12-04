@@ -5,6 +5,7 @@ const db = require('../controllers/DB')
 const mailsender = require('../controllers/MailSender')
 const axios = require('axios')
 const router = express.Router()
+const register_log = require('../controllers/RecordRegister')
 
 router.post('/', async (req, res)=>{
 
@@ -24,8 +25,12 @@ router.post('/', async (req, res)=>{
             db.query(sql, (err, data)=>{
                 if(err) console.log(err)
                 console.log(data)
+            })
+            db.query(`SELECT * FROM users WHERE email= '${values.email}'`, (error ,result)=>{
+                if(error) return console.log(error)
                 console.log("regster a user " + values.fname)
-                if(!err) return res.json({status : 'ok',message : "register successfully."})
+                register_log(result.rows[0].user_id)
+                if(!error) return res.json({status : 'ok',message : "register successfully."})
                 return res.json({message : "register unsuccessfull."})
             })
         }
