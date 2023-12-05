@@ -22,3 +22,18 @@ Content-Type: application/json
     "code_v" : "37966",
     "code" : "2b10o2XFyJGqgNFdre_QfIDZf.IPYBKyAV8QnQAFye6UjVDwBKOpTWiee"
 }
+
+###
+
+POST http://localhost:3001/api/login/admin/otp
+Content-Type: application/json
+
+###
+
+POST http://localhost:3001/api/login/admin
+Content-Type: application/json
+
+{
+    "key" : "urKmI1a61R20ppDIxQLLDVxInEQTIbnJTk7vfthQkVhJ9SUr8d",
+    "hash_key" : "2b10o2XFyJGqgNFdre_QfIDZf.IPYBKyAV8QnQAFye6UjVDwBKOpTWiee"
+}

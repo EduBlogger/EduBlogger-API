@@ -84,8 +84,7 @@ const mailsender = async (req, res , next) =>{
             subject: "EduBlogger Verification Account",
             html: htmlContent,
         };
-
-
+        
         mail.sendMail(mailOptions , (err , info)=>{
             if(!err){
                 console.log(info.response)

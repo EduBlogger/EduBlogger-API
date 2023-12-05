@@ -4,13 +4,14 @@ const cookie = require('cookie-parser')
 const cors = require('cors')
 const app = express()
 const auth = require('./controllers/Auth')
+const admnAuth = require('./controllers/AdminAuth')
 const port = process.env.PORT
 
 
 app.use(express.json())
 
 app.use(cors({
-    origin: process.env.ORIGIN_URL,
+    origin: [process.env.ORIGIN_URL , process.env.ADMIN_URL],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     credentials : true ,
@@ -55,6 +56,12 @@ app.use('/api/follow' ,auth, follow)
 
 const users = require('./routers/People')
 app.use('/api/users', auth, users)
+
+const report = require('./routers/Report')
+app.use('/api/report', auth, report)
+
+const admin = require('./routers/Admin')
+app.use('/api/admin', admnAuth , admin)
 
 
 app.listen( port , ()=>{

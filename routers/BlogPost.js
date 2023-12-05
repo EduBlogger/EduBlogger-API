@@ -5,7 +5,7 @@ const uuid = require('uuid')
 const db = require('../controllers/DB')
 const router = express.Router()
 const fs = require('fs')
-
+const activity_log = require('../controllers/RecordActivity')
 
 router.use(express.urlencoded({extended : true}))
 
@@ -41,7 +41,7 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
     db.query(post_a_blog ,data, (err , result)=>{
 
       console.log(err)
-
+      activity_log(req.user_data.user_id , `Blog with bannder | ${data[0]} | status : ${data[4]} ` , 'POSTED')
       if(err) return res.send({message : 'error'}).status(500)
 
       if(result) return res.send({message : 'blog successfuly created'}).status(201)
@@ -65,7 +65,7 @@ router.post('/no_banner', (req ,res)=>{
   console.log(data)
 
   const post_a_blog = 'INSERT INTO blog_post (title, content, category_id, status , user_id) VALUES($1, $2, $3, $4, $5)'
-
+  activity_log(req.user_data.user_id , `Blog no bannder | ${data[0]} | status : ${data[4]} ` , 'POSTED')
   db.query(post_a_blog ,data, (err , result)=>{
 
     console.log(err)
@@ -117,7 +117,7 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
     db.query(edit_blog ,data, (err , result)=>{
 
       console.log(err)
-
+      activity_log(req.user_data.user_id , `Blog with bannder | ${data[0]} | status : ${data[4]} ` , 'UPDATE')
       if(err) return res.send({message : 'error'}).status(500)
 
       if(result) return res.send({message : 'blog successfuly edited'}).status(200)
@@ -173,6 +173,7 @@ router.post('/edit_noBanner', (req, res)=>{
           console.log(err)
           return res.send({message : 'error'}).status(500)
         }else{
+          activity_log(req.user_data.user_id , `Blog no bannder | ${data[0]} | status : ${data[3]} ` , 'UPDATE')
           if(result) return res.send({message : 'blog successfuly edited'}).status(200)
         }  
       })
@@ -195,7 +196,7 @@ router.post('/change_aud' , (req, res)=>{
       console.log(error)
       return res.send({successfull : false})
     }
-
+    activity_log(req.user_data.user_id , `Change Audience | status : ${req.body.status} ` , 'UPDATE')
     if(result) return res.send({successfull : true})
 
   })
@@ -209,6 +210,7 @@ router.post('/delete' , (req, res)=>{
     DELETE FROM comments WHERE post_id = ${req.body.post_id};
     DELETE FROM saved WHERE post_id = ${req.body.post_id};
     DELETE FROM liked WHERE post_id = ${req.body.post_id};
+    DELETE FROM reports WHERE post_id = ${req.body.post_id};
     DELETE FROM blog_post WHERE post_id = ${req.body.post_id} AND user_id = ${req.user_data.user_id};
   `
 
@@ -217,6 +219,7 @@ router.post('/delete' , (req, res)=>{
       console.log(error)
       return res.send({successfull : false})
     }
+    activity_log(req.user_data.user_id , `Blog | Delete a blog ` , 'DELETED')
     if(result) return res.send({successfull : true})
   })
 

@@ -236,7 +236,9 @@ router.get('/image' , (req, res)=>{
             return res.send({successfull : false})
         }
 
-        if(result) return res.send({image : result.rows[0].user_profile_image})
+        if(result.rowCount != 0) return res.send({image : result.rows[0].user_profile_image})
+
+        return res.send({successfull : false})
     })
 })
 
