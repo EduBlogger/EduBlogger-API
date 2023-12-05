@@ -1,4 +1,4 @@
-const { Client } = require('pg')
+const {Pool} = require('pg')
 require('dotenv').config()
 
 /* const pool = new Client({
@@ -8,14 +8,14 @@ require('dotenv').config()
     database : process.env.DB_DATABASE,
     port : process.env.DB_PORT
 }) */
-
-const { Pool } = pg;
-
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL + "?sslmode=require",
 })
 
 
-pool.connect()
+pool.connect((err)=>{
+    if(err) throw err
+    console.log('DB connection is successfull!')
+})
 
 module.exports = pool;
