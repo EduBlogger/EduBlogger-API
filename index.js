@@ -18,6 +18,8 @@ app.use(cors({
     proxy: process.env.ORIGIN_URL
 }));
 
+app.options('*', cors());
+
 app.use(cookie())
 
 
