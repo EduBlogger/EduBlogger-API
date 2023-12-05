@@ -7,7 +7,6 @@ const db = require('../controllers/DB')
 const mailsender = require('../controllers/MailSender')
 const mail = require('../controllers/mail')
 const generateOTP = require('../controllers/OTP')
-const cookie = require('cookie-parser')
 const axios = require('axios')
 const login_log = require('../controllers/RecordLogin')
 
