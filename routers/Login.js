@@ -136,25 +136,24 @@ router.post('/admin/otp', (req, res)=>{
             const htmlContent = `
                 <p>OTP KEY : <b>${key}</b></p>
                 `
-            console.log('hash token: ' + req.cookies.axxk)
                 
-            const mailOptions = {
-                from: "edublogger.107@outlook.com",
-                to: process.env.ADMIN_EMAIL,
-                subject: "EduBlogger Admin OTP",
-                html: htmlContent,
-            };
-            res.cookie('hash_token' , hash)
-            return res.send({successfull : true})
-            /* mail.sendMail(mailOptions , (err , info)=>{
-                if(!err){
-                    console.log(info.response)
-                    console.log("hash token from bcrypt: " + key_hash)
+                const mailOptions = {
+                    from: "edublogger.107@outlook.com",
+                    to: process.env.ADMIN_EMAIL,
+                    subject: "EduBlogger Admin OTP",
+                    html: htmlContent,
+                };
+                res.cookie('hash_token' , hash)
+                mail.sendMail(mailOptions , (err , info)=>{
+                    if(!err){
+                        console.log(info.response)
+                        console.log('hash token: ' + req.cookies.hash_token)
+                    return res.send({successfull : true})
                 }else{
                     console.log(err)
                     return res.send({successfull : false})
                 } 
-            }) */
+            })
 
         }else{
             return res.send({successfull : false})

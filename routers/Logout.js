@@ -7,5 +7,10 @@ router.get('/' ,(req, res)=>{
     return res.json({status : 'successful'})
 })
 
+router.get('/admin' , (req, res)=>{
+    res.clearCookie('adminToken')
+    return res.json({status : 'successful'})
+})
+
 
 module.exports = router
