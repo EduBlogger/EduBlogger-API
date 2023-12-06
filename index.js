@@ -14,22 +14,28 @@ app.use(cors({
     origin: [process.env.ORIGIN_URL , process.env.ADMIN_URL],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
-    credentials : true ,
-    proxy: process.env.ORIGIN_URL
+    credentials : true
 }));
 
-/* app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', process.env.ORIGIN_URL || process.env.ADMIN_URL);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', true);
-  
-    if (req.method === 'OPTIONS') {
-      res.sendStatus(200);
-    } else {
-      next();
-    }
-  }); */
+
+const allowedOrigins = [process.env.ORIGIN_URL , process.env.ADMIN_URL];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  console.log(origin)
+
+  // Check if the requesting origin is in the list of allowed origins
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  }
+
+  next();
+});
+
+
   
 
 app.options('*', cors());
@@ -43,6 +49,7 @@ app.use(express.static('Public/images/user_profiles'))
 
 
 
+/* public apis */
 const login = require('./routers/Login')
 app.use('/api/login', login)    
 
@@ -58,6 +65,12 @@ app.use('/api/forgot', forgot)
 const logout = require('./routers/Logout')
 app.use('/api/logout', logout)
 
+
+
+/* private apis */
+
+
+/* user side route */
 const blog = require('./routers/BlogPost')
 app.use('/api/blog', auth, blog)
 
@@ -76,6 +89,8 @@ app.use('/api/users', auth, users)
 const report = require('./routers/Report')
 app.use('/api/report', auth, report)
 
+
+/* admin side route */
 const admin = require('./routers/Admin')
 app.use('/api/admin', admnAuth , admin)
 
