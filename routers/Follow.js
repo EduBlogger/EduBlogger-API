@@ -26,7 +26,7 @@ router.post('/remove' , (req, res)=>{
             console.log(error)
             return res.json({successfull : false})
         }
-        activity_log(req.user_data.user_id , `Follow | Unfollow a user` , 'DELETE')
+        activity_log(req.user_data.user_id , `Follow | Unfollow a user` , 'DELETED')
         if(result) return res.json({successfull : true})
     })
 })

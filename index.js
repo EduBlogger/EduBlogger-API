@@ -18,7 +18,7 @@ app.use(cors({
     proxy: process.env.ORIGIN_URL
 }));
 
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', process.env.ORIGIN_URL || process.env.ADMIN_URL);
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
     } else {
       next();
     }
-  });
+  }); */
   
 
 app.options('*', cors());

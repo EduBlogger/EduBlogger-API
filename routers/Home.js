@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../controllers/DB')
+const activity_log = require('../controllers/RecordActivity')
 
 router.get('/', (req, res)=>{
     console.log("user is loading contents [Time]: " + (new Date()))
@@ -11,7 +12,7 @@ router.get('/', (req, res)=>{
         blogs = `
             SELECT *
             FROM
-            (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
+            (SELECT f.* FROM follows fs INNER JOIN follower_post f ON fs.followed_id = f.user_id OR fs.follower_id = f.user_id WHERE fs.follower_id = ${req.user_data.user_id}
             UNION
             SELECT * FROM public_post) as blogs
             WHERE blogs.title ILIKE '%${req.query.search}%' AND category_id = ${req.query.category} 
@@ -23,7 +24,7 @@ router.get('/', (req, res)=>{
         blogs = `
             SELECT *
             FROM
-            (SELECT DISTINCT f.* FROM follower_post f , follows fs WHERE fs.followed_id = f.user_id OR fs.follower_id = f.user_id AND fs.follower_id = ${req.query.user_id}
+            (SELECT f.* FROM follows fs INNER JOIN follower_post f ON fs.followed_id = f.user_id OR fs.follower_id = f.user_id WHERE fs.follower_id = ${req.user_data.user_id}
             UNION
             SELECT * FROM public_post) as blogs
             WHERE blogs.title ILIKE '%${req.query.search}%' 
@@ -93,6 +94,35 @@ router.post('/comment' , (req, res)=>{
     db.query(comment,data, (error , result)=>{
         if(error){
             console.log(error)
+            activity_log(req.user_data.user_id , 'Commmet | comment on a blog post', 'ADDED')
+            return res.send({successful : false})
+        }
+        if(result) return res.send({successful : true})
+    })
+})
+
+router.put('/comment' , (req, res)=>{
+
+    const comment = `UPDATE comments SET user_comment = '${req.body.user_comment}' WHERE user_id = ${req.user_data.user_id} AND post_id = ${req.body.post_id} AND comment_id = ${req.body.comment_id}`
+
+    db.query(comment, (error , result)=>{
+        if(error){
+            console.log(error)
+            activity_log(req.user_data.user_id , 'Commmet | edit comment on a blog post', 'UPDATE')
+            return res.send({successful : false})
+        }
+        if(result) return res.send({successful : true})
+    })
+})
+
+router.delete('/comment/:id' , (req, res)=>{
+
+    const comment = `DELETE FROM comments WHERE user_id = ${req.user_data.user_id} AND comment_id = ${req.params.id}`
+
+    db.query(comment, (error , result)=>{
+        if(error){
+            console.log(error)
+            activity_log(req.user_data.user_id , 'Commmet | deleted comment on a blog post', 'DELETED')
             return res.send({successful : false})
         }
         if(result) return res.send({successful : true})
@@ -131,6 +161,7 @@ router.post('/react', (req, res)=>{
     db.query(liked, (error , result)=>{
         if(error){
             console.log(error)
+            activity_log(req.user_data.user_id , 'Liked | liked on a blog post', 'ADDED')
             return res.send({successful : false})
         }
         if(result) return res.send({successful : true})
@@ -149,6 +180,7 @@ router.post('/disreact', (req, res)=>{
     db.query(liked, (error , result)=>{
         if(error){
             console.log(error)
+            activity_log(req.user_data.user_id , 'Disliked | disliked on a blog post', 'DELETED')
             return res.send({successful : false})
         }
         if(result) return res.send({successful : true})
@@ -185,6 +217,7 @@ router.post('/save', (req, res)=>{
     db.query(save_blog , (error , result)=>{
         if(error){
             console.log(error)
+            activity_log(req.user_data.user_id , 'Saved | saved a blog post', 'ADDED')
             res.send({successful : false})
         }
 
