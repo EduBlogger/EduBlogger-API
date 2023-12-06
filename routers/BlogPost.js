@@ -41,7 +41,7 @@ router.post('/', upload.single('blogBanner'), (req ,res)=>{
     db.query(post_a_blog ,data, (err , result)=>{
 
       console.log(err)
-      activity_log(req.user_data.user_id , `Blog with bannder | ${data[0]} | status : ${data[4]} ` , 'POSTED')
+      activity_log(req.user_data.user_id , `Blog with banner | ${data[0]} | status : ${data[4]} ` , 'POSTED')
       if(err) return res.send({message : 'error'}).status(500)
 
       if(result) return res.send({message : 'blog successfuly created'}).status(201)
@@ -117,7 +117,7 @@ router.post('/edit', upload.single('blogBanner'), (req, res)=>{
     db.query(edit_blog ,data, (err , result)=>{
 
       console.log(err)
-      activity_log(req.user_data.user_id , `Blog with bannder | ${data[0]} | status : ${data[4]} ` , 'UPDATE')
+      activity_log(req.user_data.user_id , `Blog with banner | ${data[0]} | status : ${data[4]} ` , 'UPDATE')
       if(err) return res.send({message : 'error'}).status(500)
 
       if(result) return res.send({message : 'blog successfuly edited'}).status(200)
@@ -173,7 +173,7 @@ router.post('/edit_noBanner', (req, res)=>{
           console.log(err)
           return res.send({message : 'error'}).status(500)
         }else{
-          activity_log(req.user_data.user_id , `Blog no bannder | ${data[0]} | status : ${data[3]} ` , 'UPDATE')
+          activity_log(req.user_data.user_id , `Blog no banner | ${data[0]} | status : ${data[3]} ` , 'UPDATE')
           if(result) return res.send({message : 'blog successfuly edited'}).status(200)
         }  
       })

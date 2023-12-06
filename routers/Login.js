@@ -37,7 +37,6 @@ router.post('/' , (req, res)=>{
                 if(result){
                     db.query(sql , (err , data) =>{
     
-                
                         if(err) return res.json({error : "Error on Server"})
                         if(data.rows.length > 0){
                             bcrypt.compare(req.body.password.toString() , data.rows[0].password , (err , result)=>{
@@ -52,10 +51,10 @@ router.post('/' , (req, res)=>{
                                     console.log("userdata : " + user.toString())
                                     console.log("user " + user.username + " is login [Time]: " + (new Date()).getDate())
                 
+                                    login_log(user.user_id , 'SUCCESSFULL')
                                     const token = jwt.sign( {userdata : user} , process.env.JWT_SECRET_KEY , {expiresIn: '30d'})
                 
                                     res.cookie('token', token)
-                                    login_log(user.user_id , 'SUCCESSFULL')
                                     return res.json({status : "successful"})
                                 }else{
                                     login_log(user.user_id , 'FAILED')
@@ -67,12 +66,10 @@ router.post('/' , (req, res)=>{
                         }   
                     })
                 }else{
-                    login_log(user.user_id , 'FAILED')
                     return res.json({error : "invalid verification code"})
                 }
             })
         }else{
-            login_log(user.user_id , 'FAILED')
             return res.json({error : "reCAPTCHA verification failed"})
         }
     }).catch((error) => {

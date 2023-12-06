@@ -61,6 +61,9 @@ router.delete('/users/:id' , (req, res)=>{
     DELETE FROM saved WHERE user_id = ${req.params.id};
     DELETE FROM comments WHERE user_id = ${req.params.id};
     DELETE FROM blog_post WHERE user_id = ${req.params.id};
+    DELETE FROM activity WHERE user_id = ${req.params.id};
+    DELETE FROM login_log WHERE user_id = ${req.params.id};
+    DELETE FROM register_log WHERE user_id = ${req.params.id};
     DELETE FROM users WHERE user_id = ${req.params.id};
     `
     db.query(delete_user , (error , result)=>{
@@ -122,7 +125,7 @@ router.get('/reports_log' , (req ,res)=>{
     SELECT b.post_id, b.title , b.status , c.category_name , CONCAT(u.first_name , ' ' , u.last_name) full_name , TO_CHAR(b.date_posted , 'Mon DD, YYYY HH:MI AM') as date_posted, COUNT(r.report_id) as report_count
     FROM blog_post b INNER JOIN users u ON b.user_id = u.user_id INNER JOIN category c ON c.category_id = b.category_id INNER JOIN reports r ON r.post_id = b.post_id
     GROUP BY b.post_id , c.category_name , u.first_name , u.last_name , b.date_posted
-    ORDER BY b.date_posted DESC
+    ORDER BY report_count DESC
     `
     db.query(report , (error , result)=>{
         if(error) return console.log(error)
