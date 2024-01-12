@@ -65,7 +65,7 @@ router.post('/no_banner', (req ,res)=>{
   console.log(data)
 
   const post_a_blog = 'INSERT INTO blog_post (title, content, category_id, status , user_id) VALUES($1, $2, $3, $4, $5)'
-  activity_log(req.user_data.user_id , `Blog no bannder | ${data[0]} | status : ${data[4]} ` , 'POSTED')
+  activity_log(req.user_data.user_id , `Blog no banner | ${data[0]} | status : ${data[3]} ` , 'POSTED')
   db.query(post_a_blog ,data, (err , result)=>{
 
     console.log(err)

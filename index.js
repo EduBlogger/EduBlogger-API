@@ -11,14 +11,14 @@ const port = process.env.PORT
 app.use(express.json())
 
 app.use(cors({
-    origin: [process.env.ORIGIN_URL , process.env.ADMIN_URL],
+    origin: [process.env.ORIGIN_URL , process.env.ADMIN_URL, process.env.ORIGIN_URL2],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     credentials : true
 }));
 
 
-const allowedOrigins = [process.env.ORIGIN_URL , process.env.ADMIN_URL];
+/* const allowedOrigins = [process.env.ORIGIN_URL , process.env.ADMIN_URL, process.env.ORIGIN_URL2];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   }
 
   next();
-});
+}); */
 
 
   

@@ -94,9 +94,9 @@ router.post('/comment' , (req, res)=>{
     db.query(comment,data, (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Commmet | comment on a blog post', 'ADDED')
             return res.send({successful : false})
         }
+        activity_log(req.user_data.user_id , 'Comment | comment on a blog post', 'ADDED')
         if(result) return res.send({successful : true})
     })
 })
@@ -108,9 +108,9 @@ router.put('/comment' , (req, res)=>{
     db.query(comment, (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Commmet | edit comment on a blog post', 'UPDATE')
             return res.send({successful : false})
         }
+        activity_log(req.user_data.user_id , 'Comment | edit comment on a blog post', 'UPDATE')
         if(result) return res.send({successful : true})
     })
 })
@@ -122,9 +122,9 @@ router.delete('/comment/:id' , (req, res)=>{
     db.query(comment, (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Commmet | deleted comment on a blog post', 'DELETED')
             return res.send({successful : false})
         }
+        activity_log(req.user_data.user_id , 'Comment | deleted comment on a blog post', 'DELETED')
         if(result) return res.send({successful : true})
     })
 })
@@ -161,9 +161,9 @@ router.post('/react', (req, res)=>{
     db.query(liked, (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Liked | liked on a blog post', 'ADDED')
             return res.send({successful : false})
         }
+        activity_log(req.user_data.user_id , 'Liked | liked on a blog post', 'ADDED')
         if(result) return res.send({successful : true})
     })
 })
@@ -180,9 +180,9 @@ router.post('/disreact', (req, res)=>{
     db.query(liked, (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Disliked | disliked on a blog post', 'DELETED')
             return res.send({successful : false})
         }
+        activity_log(req.user_data.user_id , 'Disliked | disliked on a blog post', 'DELETED')
         if(result) return res.send({successful : true})
     })
 })
@@ -217,10 +217,9 @@ router.post('/save', (req, res)=>{
     db.query(save_blog , (error , result)=>{
         if(error){
             console.log(error)
-            activity_log(req.user_data.user_id , 'Saved | saved a blog post', 'ADDED')
             res.send({successful : false})
-        }
-
+        }   
+        activity_log(req.user_data.user_id , 'Saved | saved a blog post', 'ADDED')
         if(result) return res.send({successful : true})
 
     })
@@ -235,7 +234,7 @@ router.post('/unsave', (req, res)=>{
             console.log(error)
             res.send({successful : false})
         }
-
+        activity_log(req.user_data.user_id , 'Saved | unsaved a blog post', 'DELETED')
         if(result) return res.send({successful : true})
         
     })

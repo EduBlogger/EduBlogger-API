@@ -29,6 +29,7 @@ router.post('/', async (req, res)=>{
             db.query(`SELECT * FROM users WHERE email= '${values.email}'`, (error ,result)=>{
                 if(error) return console.log(error)
                 console.log("regster a user " + values.fname)
+                console.log("register user id" + result.rows[0].user_id)
                 register_log(result.rows[0].user_id)
                 if(!error) return res.json({status : 'ok',message : "register successfully."})
                 return res.json({message : "register unsuccessfull."})
